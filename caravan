@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# ===================================================================
+# Caravan
+# @description: a setup script for getting docker enviroment for
+#   Digital Desert projects
+# @author: Mario Bonito
+# @version: 0.1
+# ===================================================================
+
+# Variables
+# ----------------------
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+LARADOCK_VERSION=9.7
+OLDIFS="$IFS"
+PLATFM="unix"
+
+case "$(uname -s)" in
+   CYGWIN*|MINGW32*|MSYS*|MINGW*)
+     PLATFM="windoz"
+    ;;
+   *)
+     PLATFM="unix"
+     ;;
+esac
+
+DOCKER="${DIR}/docker"
+DATA_DOCKER="${DIR}/.caravan"
+SCAFFOLDING="${DIR}/scaffolding"
+OVERRIDES="${SCAFFOLDING}/docker"
+
+# Lets check to see if there is an override
+if [[ "$1" == "reset" ]]; then
+  rm -rf "$DOCKER"
+  rm -rf "$DATA_DOCKER"
+  echo "  [caravan] reset the plaftform"
+  exit
+fi
+
+
+# Lets check if there is a docker directory
+if [[ ! -d "${DOCKER}" ]]; then
+  mkdir "$DOCKER";
+  find ${SCAFFOLDING} -type d -mindepth 1 -maxdepth 1 -exec cp -R {} ${DOCKER} \;
+  cp ${SCAFFOLDING}/docker-compose.yml ${DOCKER}/docker-compose.yml
+  cp ${SCAFFOLDING}/env-sample ${DOCKER}/.env
+fi
+
+echo "  [caravan] hydrating the dockerfiles to caravan"
+find "$DOCKER" -type f -exec perl -p -i -e 's/(?<!FROM\s)laradock/caravan/g' {} \;
+find "$DOCKER" -name "*.bak" -type f -delete
+
+# -- add a docker folder in the scaffolding to override some files in the new built docker folder
+if [[ -d "${OVERRIDES}" ]]; then
+  rsync -a "${OVERRIDES}/" "${DOCKER}"
+fi
