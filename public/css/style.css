@@ -1,0 +1,193 @@
+/**
+ *  Caravan Style sheet
+ *  @author: Digital Desert
+ */
+
+html {
+  font-family: Arial, sans-serif;
+  color: #000;
+}
+
+/* ======= PAINTERBOARD =============== */
+/* @credits: https://codepen.io/CodePen_higithub97_Linhz/pen/LYpGMeZ */
+/* ======= ============ =============== */
+
+
+.painterboard {
+  z-index: -9999;
+  position: relative;
+  margin-top: -156px
+}
+.painterboard * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  /* background: rgb(252, 246, 252); */
+}
+
+h1 {
+  position: absolute;
+  margin: 20px auto 0;
+  min-width: 100%;
+}
+
+.all {
+  width: 300px;
+  height: 500px;
+  background: #b7bbc1;
+  border-radius: 10px;
+  margin: 20px auto 0;
+  display: block;
+  position: relative;
+}
+
+.skatra {
+  width: 300px;
+  height: 300px;
+  background: #c05c24;
+  position: relative;
+  top: 340px;
+  right: 18px;
+  overflow: hidden;
+  transform: rotate(45deg);
+  border-radius: 30px;
+}
+
+.control {
+  width: 300px;
+  height: 500px;
+}
+
+.left {
+}
+
+.right {
+  position: relative;
+  top: 1px;
+}
+
+.lf1,
+.lf2,
+.lf3,
+.lf4,
+.lf5 {
+  background: #000;
+  /* clip-path: polygon(27% 58%, 85% 18%, 44% 65%); */
+  width: 90px;
+  height: 100px;
+  position: relative;
+  /* top: -46px; */
+  left: 74px;
+  border-radius: 16% 47% 51% 28% / 52% 31% 43% 29%;
+  transform: rotate(45deg);
+}
+.lf2 {
+  height: 150px;
+  left: -3px;
+  top: -53px;
+  border-radius: 12% 47% 51% 28% / 52% 31% 43% 29%;
+}
+
+.lf3 {
+  height: 180px;
+  width: 140px;
+  left: -3px;
+  top: -158px;
+  border-radius: 12% 47% 51% 28% / 52% 31% 43% 29%;
+}
+
+.lf4 {
+  height: 160px;
+  width: 140px;
+  left: 79px;
+  top: -406px;
+  border-radius: 63% 37% 71% 29% / 69% 34% 66% 31%;
+  z-index: 20;
+}
+
+.rg1,
+.rg2,
+.rg3,
+.rg4 {
+  background: #c05c24;
+  width: 56px;
+  height: 62px;
+  right: 2px;
+  border-radius: 32% 54% 36% 20% / 31% 31% 34% 11%;
+  position: absolute;
+  top: 287px;
+  left: 101px;
+  transform: rotate(33deg);
+}
+
+.rg2 {
+  top: 311px;
+  left: 128px;
+  transform: rotate(22deg);
+  border-radius: 56% 54% 60% 53% / 66% 46% 24% 11%;
+  height: 50px;
+}
+
+.rg3 {
+  border-radius: 63% 37% 71% 29% / 69% 34% 66% 31%;
+  width: 10px;
+  transform: rotate(76deg);
+  top: 313px;
+  left: 122px;
+}
+
+.rg4 {
+  border-radius: 75% 2% 51% 9% / 76% 68% 32% 30%;
+  width: 110px;
+  transform: rotate(-20deg);
+  top: 453px;
+  left: 124px;
+  z-index: 50;
+}
+
+.container {
+  height: 200px;
+  width: 700px;
+  margin: 5em auto;
+  position: relative;
+}
+
+#water {
+  overflow: hidden;
+  height: 200px;
+  width: 700px;
+  position: relative;
+  /*outline: 1px solid white;*/
+}
+
+#water-txt {
+  position: absolute;
+  top: -90px;
+  font-size: 12em;
+  line-height: 1;
+}
+#water-txt::after {
+  content: "";
+  display: block;
+  height: 43px;
+  width: 700px;
+  /*outline: 1px solid gold;*/
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background: #fff;
+}
+
+#sub-text {
+  position: absolute;
+  top: 204px;
+  right: 100px;
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  -webkit-transform: rotate(90deg);
+  transform: rotate(90deg);
+  font-size: .875em;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
