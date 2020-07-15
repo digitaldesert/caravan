@@ -1,50 +1,67 @@
 #!/usr/bin/env bash
-# ===================================================================
-# Caravan
-# @description: a setup script for getting docker enviroment for
-#   Digital Desert projects
-# @author: Mario Bonito
-# @version: 0.1
-# ===================================================================
+# ========================================================= #
+# CARAVAN
+# @author: Digital Desert
+# @licence: MIT
+# @version: 0.1 beta
+# ========================================================= #
 
 # Variables
 # ----------------------
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-LARADOCK_VERSION=9.7
+LARADOCK_VERSION=11.0
 OLDIFS="$IFS"
 PLATFM="unix"
-
-case "$(uname -s)" in
-   CYGWIN*|MINGW32*|MSYS*|MINGW*)
-     PLATFM="windoz"
-    ;;
-   *)
-     PLATFM="unix"
-     ;;
-esac
-
+# directories
 DOCKER="${DIR}/docker"
+APPLICATION="${DIR}/app"
 DATA_DOCKER="${DIR}/.caravan"
 SCAFFOLDING="${DIR}/scaffolding"
 OVERRIDES="${SCAFFOLDING}/docker"
 
-# Lets check to see if there is an override
-if [[ "$1" == "reset" ]]; then
-  rm -rf "$DOCKER"
-  rm -rf "$DATA_DOCKER"
-  echo "  [caravan] reset the plaftform"
-  exit
-fi
+# Lets check to see if you have an mojo app already
 
+if [[ ! -d "${APPLICATION}" ]]; then
+  echo "Noticed you do not have a Mojo application, do you wish I create one for you?"
+  select yn in "Yes" "No"; do
+      case $yn in
+          Yes ) 
+            echo "  [caravan] generating Mojo application"
+            docker run --rm -v "$(pwd):/usr/src/app" --user "$(id -u):$(id -g)" tekki/mojolicious mojo generate app App
+            rm -rf app/public
+            break;;
+          No )
+            break;;
+      esac
+  done
+fi
 
 # Lets check if there is a docker directory
 if [[ ! -d "${DOCKER}" ]]; then
-  mkdir "$DOCKER";
-  find ${SCAFFOLDING} -type d -mindepth 1 -maxdepth 1 -exec cp -R {} ${DOCKER} \;
-  cp ${SCAFFOLDING}/docker-compose.yml ${DOCKER}/docker-compose.yml
-  cp ${SCAFFOLDING}/env-sample ${DOCKER}/.env
+  echo "  [caravan] downloading resources"
+  curl -s -L https://github.com/laradock/laradock/archive/v${LARADOCK_VERSION}.tar.gz | tar xz
+  cp -r laradock*/. docker
+  rm -rf laradock*
+  find docker -maxdepth 1 -type f -exec rm {} \;
+  find docker -maxdepth 1 -type d -name ".*" -exec rm -rf {} \;
 fi
+
+echo "  [caravan] merging scaffolding"
+cp ${SCAFFOLDING}/.env ${DOCKER}/.env
+cp ${SCAFFOLDING}/docker-compose.yml ${DOCKER}/docker-compose.yml
+
+IFS=$'\n'
+CONTAINERS=( $(find docker -maxdepth 1 -type d -exec basename \{} \;))
+IFS=OLDIFS
+
+for cnt in "${CONTAINERS[@]}"
+do
+  isInFile=$(cat "${DOCKER}/docker-compose.yml" | grep -c "$cnt")
+  if [ $isInFile -eq 0 ] && [ "$cnt" != "scaffolding" ]; then
+      rm -rf "$DOCKER/$cnt"
+  fi
+done
 
 echo "  [caravan] hydrating the dockerfiles to caravan"
 find "$DOCKER" -type f -exec perl -p -i -e 's/(?<!FROM\s)laradock/caravan/g' {} \;
@@ -54,3 +71,6 @@ find "$DOCKER" -name "*.bak" -type f -delete
 if [[ -d "${OVERRIDES}" ]]; then
   rsync -a "${OVERRIDES}/" "${DOCKER}"
 fi
+
+echo "  ==================================="
+echo "  [caravan] complete. Make some magic"
